@@ -1,0 +1,8 @@
+# Database
+inventory.db
+
+# Logs & Environment
+node_modules/
+.env
+*.log
+inventory.db
