@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Assistant Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateX(10px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out;
+    }
+</style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <nav class="bg-white shadow-sm p-4 mb-6 border-b border-gray-200">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold text-slate-800">Inventory Assistant Pro</h1>
+            <div id="status-indicator" class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="text-sm text-gray-600 font-medium">Server Connected</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4">
+        
+        <section id="inventory-controls" class="mb-8">
+            <button onclick="openAddModal()" class="w-full py-6 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-all flex flex-col items-center justify-center gap-1">
+                <span class="text-2xl font-light">+</span>
+                <span class="font-semibold uppercase tracking-wider text-xs">Add New Tool Entry</span>
+            </button>
+        </section>
+
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-gray-500 text-sm font-bold uppercase tracking-widest">Current Inventory</h2>
+                <span id="tool-count" class="text-xs bg-gray-200 px-2 py-1 rounded text-gray-600">0 Types</span>
+            </div>
+            
+            <div id="tool-list" class="grid gap-3">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center text-gray-400">
+                    Loading inventory...
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="tool-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div id="modal-content" class="p-8">
+                </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+export function renderAddToolForm() {
+    const modalContent = document.getElementById('modal-content');
+    if (!modalContent) return; // Safety check
+    
+    modalContent.innerHTML = `...`;
+
+    modalContent.innerHTML = `
+        <div class="admin-only animate-fadeIn">
+            <div class="flex items-center gap-3 mb-8 border-b pb-4">
+                <div class="bg-blue-100 text-blue-600 p-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Add New Tool</h2>
+                    <p class="text-sm text-slate-400 font-medium">Register a new asset to the inventory</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="group">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-1 block group-focus-within:text-blue-500 transition-colors">Tool Name</label>
+                    <input type="text" id="new-name" placeholder="e.g. Impact Drill" 
+                        class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-700 font-medium">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="group">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-1 block group-focus-within:text-blue-500 transition-colors">Serial Number</label>
+                        <input type="text" id="new-serial" placeholder="SN-0000" 
+                            class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-mono text-slate-700">
+                    </div>
+                    <div class="group">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-1 block group-focus-within:text-blue-500 transition-colors">Category</label>
+                        <input type="text" id="new-category" placeholder="Power Tools" 
+                            class="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-700">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 pt-4">
+                    <button onclick="window.submitNewTool()" 
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-[0.98]">
+                        Save to Inventory
+                    </button>
+                    <button onclick="document.getElementById('tool-modal').classList.add('hidden')" 
+                        class="px-6 py-3.5 text-slate-400 hover:text-slate-600 font-bold transition-all">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    }
