@@ -15,10 +15,25 @@ router.get('/summary', (req, res) => {
 router.get('/detail/:name', (req, res) => {
     const toolName = req.params.name;
     const sql = `
-        SELECT t.*, trans.user_name AS current_user, trans.time_taken, trans.id AS transaction_id
+        SELECT 
+            t.*, 
+            -- 1. Get the ACTIVE user 
+            trans.user_name AS current_user, 
+            trans.time_taken, 
+            trans.id AS transaction_id,
+
+            -- 2. Get the HISTORY user
+            (SELECT user_name 
+             FROM transactions 
+             WHERE tool_id = t.id 
+             ORDER BY id DESC -- Order by ID is usually faster/safer for "newest"
+             LIMIT 1) AS last_user
+
         FROM tools t
+        -- This JOIN ensures we still see who has the tool RIGHT NOW
         LEFT JOIN transactions trans ON t.id = trans.tool_id AND trans.status = 'ACTIVE'
-        WHERE t.name = ?`;
+        WHERE t.name = ?
+    `;
     
     db.all(sql, [toolName], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -56,32 +71,26 @@ router.post('/decommission', (req, res) => {
 
 router.post('/status', (req, res) => {
     const { toolId, status, note } = req.body;
+    const isRepairing = status === 'AVAILABLE';
 
-    // FIXED: Removed "current_user = NULL" (this caused the crash)
-    const sqlTool = `UPDATE tools SET current_status = ? WHERE id = ?`;
-    
-    // This handles the "Return" by closing the transaction
-    const sqlTrans = `UPDATE transactions SET time_returned = datetime('now'), status = 'DAMAGED' 
-                      WHERE tool_id = ? AND time_returned IS NULL`;
+    const sqlTool = isRepairing 
+        ? `UPDATE tools SET current_status = ?, damage_reason = NULL, damage_date = NULL WHERE id = ?`
+        : `UPDATE tools SET current_status = ?, damage_reason = ?, damage_date = datetime('now') WHERE id = ?`;
 
-    db.serialize(() => {
-        // 1. Update Tool Status
-        db.run(sqlTool, [status, toolId], function(err) {
-            if (err) {
-                console.error("Tool Update Error:", err.message);
-                return res.status(500).json({ error: err.message });
-            }
-        });
+    const params = isRepairing 
+        ? [status, toolId] 
+        : [status, note, toolId];
 
-        // 2. Close Transaction (The actual "Return" action)
-        db.run(sqlTrans, [toolId], function(err) {
-            if (err) {
-                console.error("Transaction Error:", err.message);
-                // Log error but don't crash response if tool was already returned
-            }
-            // 3. Send Success ONLY after queries finish
-            res.json({ success: true });
-        });
+    db.run(sqlTool, params, function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        
+        if (status === 'DAMAGED') {
+            const sqlTrans = `UPDATE transactions SET time_returned = datetime('now'), status = 'DAMAGED' 
+                              WHERE tool_id = ? AND time_returned IS NULL`;
+            db.run(sqlTrans, [toolId]);
+        }
+
+        res.json({ success: true });
     });
 });
 module.exports = router;
