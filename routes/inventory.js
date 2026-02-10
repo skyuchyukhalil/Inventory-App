@@ -53,4 +53,35 @@ router.post('/decommission', (req, res) => {
         res.json({ success: true, message: "Tool purged from inventory" });
     });
 });
+
+router.post('/status', (req, res) => {
+    const { toolId, status, note } = req.body;
+
+    // FIXED: Removed "current_user = NULL" (this caused the crash)
+    const sqlTool = `UPDATE tools SET current_status = ? WHERE id = ?`;
+    
+    // This handles the "Return" by closing the transaction
+    const sqlTrans = `UPDATE transactions SET time_returned = datetime('now'), status = 'DAMAGED' 
+                      WHERE tool_id = ? AND time_returned IS NULL`;
+
+    db.serialize(() => {
+        // 1. Update Tool Status
+        db.run(sqlTool, [status, toolId], function(err) {
+            if (err) {
+                console.error("Tool Update Error:", err.message);
+                return res.status(500).json({ error: err.message });
+            }
+        });
+
+        // 2. Close Transaction (The actual "Return" action)
+        db.run(sqlTrans, [toolId], function(err) {
+            if (err) {
+                console.error("Transaction Error:", err.message);
+                // Log error but don't crash response if tool was already returned
+            }
+            // 3. Send Success ONLY after queries finish
+            res.json({ success: true });
+        });
+    });
+});
 module.exports = router;

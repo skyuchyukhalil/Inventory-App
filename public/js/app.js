@@ -103,47 +103,67 @@ window.decommissionTool = async (toolId, transactionId, toolName) => {
     }
 };
 window.markDamaged = async (toolId, toolName) => {
-    const note = prompt("Briefly describe the damage (e.g., 'Broken trigger', 'Missing guard'):");
-    if (note === null) return; // User cancelled
+    // Debug: Ensure toolName isn't empty here
+    if (!toolName) return console.error("Missing toolName!");
+
+    const note = prompt("Briefly describe the damage:");
+    if (note === null) return;
 
     try {
+        // This will work now if you updated ui/index.js correctly
         UI.renderLoadingState("Updating Status", "Moving to Service Required...");
         
         await ToolAPI.updateStatus(toolId, 'DAMAGED', note);
         
+        // Refresh with the preserved toolName
+        await window.openToolDetail(toolName);
+        refreshDashboard();
+    } catch (err) {
+        console.error(err);
+        alert("Failed to update status. Check console.");
+    }
+};
+
+window.applyFilter = (filterType) => {
+    // 1. Filter the items
+    const items = document.querySelectorAll('.tool-card'); 
+
+    items.forEach(item => {
+        const status = item.getAttribute('data-status'); // "AVAILABLE", "TAKEN", or "DAMAGED"
+
+        item.classList.remove('hidden');
+
+        // Logic: If filter is not ALL and doesn't match the item's status, hide it
+        if (filterType !== 'ALL' && status !== filterType) {
+            item.classList.add('hidden');
+        }
+    });
+
+    // 2. Fix the Border Switching
+    const tabs = ['all', 'available', 'taken', 'damaged'];
+    tabs.forEach(t => {
+        const el = document.getElementById(`filter-${t}`);
+        if (!el) return; // Safety check
+
+        const isActive = t === filterType.toLowerCase();
+        
+        if (isActive) {
+            el.classList.add('border-blue-600', 'shadow-md');
+            el.classList.remove('border-transparent');
+        } else {
+            el.classList.remove('border-blue-600', 'shadow-md');
+            el.classList.add('border-transparent');
+        }
+    });
+};
+window.markRepaired = async (toolId, toolName) => {
+    try {
+        UI.renderLoadingState("Updating Inventory", "Marking repair complete...");
+        // Reuse the updateStatus API but set status to 'AVAILABLE'
+        await ToolAPI.updateStatus(toolId, 'AVAILABLE', 'Repair Completed');
         await window.openToolDetail(toolName);
         refreshDashboard();
     } catch (err) {
         console.error(err);
     }
-};
-
-window.applyFilter = (filterType) => {
-    const container = document.getElementById('modal-items-list');
-    const items = container.children;
-
-    for (let item of items) {
-        const isOut = item.innerText.includes('Return');
-        const isDamaged = item.innerText.includes('text-orange-600');
-        const isAvailable = !isOut && !isDamaged;
-
-        item.classList.remove('hidden');
-
-        if (filterType === 'AVAILABLE' && !isAvailable) item.classList.add('hidden');
-        if (filterType === 'TAKEN' && !isOut) item.classList.add('hidden');
-        if (filterType === 'DAMAGED' && !isDamaged) item.classList.add('hidden');
-    }
-
-    // 2. Simplified Border Toggle
-document.querySelectorAll('[id^="filter-"]').forEach(el => {
-    const isActive = el.id === `filter-${filterType.toLowerCase()}`;
-    
-    if (isActive) {
-        el.classList.add('border-blue-600', 'shadow-md');
-        el.classList.remove('border-transparent');
-    } else {
-        el.classList.remove('border-blue-600', 'shadow-md');
-        el.classList.add('border-transparent');
-    }
-});
 };
