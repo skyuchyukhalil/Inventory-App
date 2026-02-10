@@ -118,3 +118,32 @@ window.markDamaged = async (toolId, toolName) => {
     }
 };
 
+window.applyFilter = (filterType) => {
+    const container = document.getElementById('modal-items-list');
+    const items = container.children;
+
+    for (let item of items) {
+        const isOut = item.innerText.includes('Return');
+        const isDamaged = item.innerText.includes('text-orange-600');
+        const isAvailable = !isOut && !isDamaged;
+
+        item.classList.remove('hidden');
+
+        if (filterType === 'AVAILABLE' && !isAvailable) item.classList.add('hidden');
+        if (filterType === 'TAKEN' && !isOut) item.classList.add('hidden');
+        if (filterType === 'DAMAGED' && !isDamaged) item.classList.add('hidden');
+    }
+
+    // 2. Simplified Border Toggle
+document.querySelectorAll('[id^="filter-"]').forEach(el => {
+    const isActive = el.id === `filter-${filterType.toLowerCase()}`;
+    
+    if (isActive) {
+        el.classList.add('border-blue-600', 'shadow-md');
+        el.classList.remove('border-transparent');
+    } else {
+        el.classList.remove('border-blue-600', 'shadow-md');
+        el.classList.add('border-transparent');
+    }
+});
+};

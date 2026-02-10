@@ -21,25 +21,32 @@ export function renderModalUI(toolName, items) {
     </div>
 
     <div class="grid grid-cols-4 gap-2 mb-8 bg-white border border-slate-200 p-2 rounded-2xl shadow-sm">
-        <div class="text-center py-3 bg-slate-50 rounded-xl">
+        <div id="filter-all" onclick="window.applyFilter('ALL')" 
+            class="text-center py-3 bg-slate-50 rounded-xl cursor-pointer border-2 border-blue-600 shadow-md transition-all">
             <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Total</span>
             <span class="text-xl font-black text-slate-700">${total}</span>
         </div>
-        <div class="text-center py-3 bg-green-50/50 rounded-xl">
+        
+        <div id="filter-available" onclick="window.applyFilter('AVAILABLE')" 
+             class="text-center py-3 bg-green-50/50 rounded-xl cursor-pointer transition-all border-2 border-transparent">
             <span class="block text-[10px] font-bold text-green-600 uppercase tracking-tighter">Available</span>
             <span class="text-xl font-black text-green-700">${available}</span>
         </div>
-        <div class="text-center py-3 bg-blue-50/50 rounded-xl">
+        
+        <div id="filter-taken" onclick="window.applyFilter('TAKEN')" 
+             class="text-center py-3 bg-blue-50/50 rounded-xl cursor-pointer transition-all border-2 border-transparent">
             <span class="block text-[10px] font-bold text-blue-600 uppercase tracking-tighter">Out</span>
             <span class="text-xl font-black text-blue-700">${taken}</span>
         </div>
-        <div class="text-center py-3 bg-orange-50/50 rounded-xl">
+        
+        <div id="filter-damaged" onclick="window.applyFilter('DAMAGED')" 
+             class="text-center py-3 bg-orange-50/50 rounded-xl cursor-pointer transition-all border-2 border-transparent">
             <span class="block text-[10px] font-bold text-orange-600 uppercase tracking-tighter">In Repair</span>
             <span class="text-xl font-black text-orange-700">${damaged}</span>
         </div>
     </div>
 
-    <div class="space-y-3">
+    <div id="modal-items-list" class="space-y-3">
     `;
 
     items.forEach(item => {
