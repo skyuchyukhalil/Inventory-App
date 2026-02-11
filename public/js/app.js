@@ -157,6 +157,9 @@ window.applyFilter = (filterType) => {
     });
 };
 window.markRepaired = async (toolId, toolName) => {
+
+    if (!confirm(`Mark ${toolName} as fully repaired and available?`)) return;
+
     try {
         UI.renderLoadingState("Updating Inventory", "Marking repair complete...");
         // Reuse the updateStatus API but set status to 'AVAILABLE'
@@ -165,5 +168,6 @@ window.markRepaired = async (toolId, toolName) => {
         refreshDashboard();
     } catch (err) {
         console.error(err);
+        alert("Could not mark as repaired. Check console.");ad
     }
 };

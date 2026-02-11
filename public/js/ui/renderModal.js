@@ -104,20 +104,37 @@ export function renderModalUI(toolName, items) {
                 </div>`;
         // ... inside your loop ...
         } else if (statusValue === 'DAMAGED') {
+            const dateStr = item.damage_date ? item.damage_date.split(' ')[0] : 'N/A';
+            
             actionHtml = `
-                <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold text-orange-500 uppercase bg-orange-50 px-3 py-2 rounded-lg border border-orange-100">
-                        Maintenance Required
-                    </span>
-                    
-                    <button onclick="window.markRepaired(${item.id}, '${toolName}')" 
-                            class="bg-white border border-slate-200 text-slate-600 hover:text-green-600 hover:border-green-200 px-3 py-2 rounded-lg text-xs font-bold transition-all shadow-sm">
-                        Repair Complete
-                    </button>
+                <div class="flex items-center gap-6 animate-fadeIn">
+                    <div class="flex items-center gap-4 py-1 pr-4 border-r border-slate-100">
+                        <div class="text-right">
+                            <span class="text-[9px] text-orange-400 font-black uppercase tracking-widest block mb-0.5">Damaged</span>
+                            <span class="text-[13px] font-bold text-slate-700">${dateStr}</span>
+                        </div>
+                        
+                        <div class="text-right">
+                            <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest block mb-0.5">By User</span>
+                            <span class="text-[13px] font-bold text-slate-700">${item.last_user || 'Unknown'}</span>
+                        </div>
+                    </div>
 
-                    ${menuHtml}
+                    <div class="flex flex-col">
+                        <span class="text-[11px] font-semibold text-red-500/80 italic leading-none">
+                            "${item.damage_reason || 'No details'}"
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-2 ml-auto">
+                        <button onclick="window.markRepaired(${item.id}, '${toolName}')" 
+                                class="bg-orange-50 text-orange-600 hover:bg-orange-100 px-4 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95">
+                            Complete Repair
+                        </button>
+                        ${menuHtml}
+                    </div>
                 </div>`;
-        } else {
+        }   else {
             // RESTORED: Blue Assign Button
             actionHtml = `
                 <div class="flex items-center gap-2">
