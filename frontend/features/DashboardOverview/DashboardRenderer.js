@@ -1,10 +1,3 @@
-// frontend/features/DashboardOverview/DashboardRenderer.js
-
-/**
- * DashboardRenderer
- * Responsibility: Rendering the primary inventory list and summary cards.
- */
-
 export const renderPrimaryToolList = (tools) => {
     const listContainer = document.getElementById('tool-list');
     const countBadge = document.getElementById('tool-count');

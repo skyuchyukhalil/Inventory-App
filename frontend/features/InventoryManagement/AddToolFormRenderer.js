@@ -1,5 +1,3 @@
-// frontend/features/InventoryManagement/AddToolFormRenderer.js
-
 export const renderAddToolForm = () => {
     const modalContent = document.getElementById('modal-content');
     if (!modalContent) return;

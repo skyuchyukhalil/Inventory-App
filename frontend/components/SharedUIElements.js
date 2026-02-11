@@ -1,10 +1,3 @@
-// frontend/components/SharedUIElements.js
-
-/**
- * SharedUIElements
- * Responsibility: Reusable UI blocks used across different features.
- */
-
 export const renderLoadingState = (message, progress = "") => {
     const modalContent = document.getElementById('modal-content');
     if (!modalContent) return;
