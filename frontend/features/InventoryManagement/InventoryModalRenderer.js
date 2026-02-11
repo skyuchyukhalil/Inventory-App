@@ -2,7 +2,7 @@
 
 import { renderAvailableRow } from './AvailableRowRenderer.js';
 import { renderAssignmentRow } from '../UserAssignments/AssignmentRowRenderer.js';
-import { renderMaintenanceRow } from '../MaintenanceTracking/MaintenanceRowRenderer.js';
+import { renderMaintenanceRow } from '../MaintenanceManagement/MaintenanceRowRenderer.js';
 
 export const renderInventoryModal = (toolName, items) => {
     const modalContent = document.getElementById('modal-content');

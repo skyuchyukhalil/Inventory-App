@@ -1,7 +1,13 @@
-import { ToolInventoryService } from './services/ToolInventoryService.js'
+// 1. Service Layer
+import { ToolInventoryService } from './services/ToolInventoryService.js';
+
+// 2. Feature Handlers
 import { renderPrimaryToolList } from './features/DashboardOverview/DashboardRenderer.js';
-import { renderLoadingState } from './components/SharedUIElements.js';
+import { renderInventoryModal } from './features/InventoryManagement/InventoryModalRenderer.js';
 import { renderAddToolForm } from './features/InventoryManagement/AddToolFormRenderer.js';
+
+// 3. Shared Components
+import { renderLoadingState } from './components/SharedUIElements.js';
 
 /**
  * Initialization: Setup global listeners and initial data fetch
@@ -20,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 async function refreshInventoryDashboard() {
     try {
-        const summaryData = await ToolInventoryService.fetchInventoryDashboardSummary();
-        // Use the explicit feature renderer
+        // MATCHED: fetchDashboardSummary
+        const summaryData = await ToolInventoryService.fetchDashboardSummary();
         renderPrimaryToolList(summaryData);
     } catch (err) {
         console.error("Critical: Dashboard failed to refresh", err);
@@ -30,8 +36,7 @@ async function refreshInventoryDashboard() {
 
 /**
  * Window Bridges: 
- * These remain global for now so your index.html 'onclick' attributes can find them.
- * In the next phase, we will move these into "Handler" files.
+ * Bridging HTML onclicks to our modern ES modules.
  */
 
 window.openAddModal = () => {
@@ -46,7 +51,8 @@ window.submitNewTool = async () => {
 
     if (!toolName || !serialNumber) return alert("Validation Failed: Name and Serial are required.");
 
-    await ToolInventoryService.registerNewInventoryItem({ 
+    // MATCHED: registerNewTool
+    await ToolInventoryService.registerNewTool({ 
         name: toolName, 
         serial_number: serialNumber, 
         category: categoryName 
@@ -60,8 +66,9 @@ window.openToolDetail = async (toolName) => {
     const modal = document.getElementById('tool-modal');
     modal.classList.remove('hidden');
     try {
-        const detailRecords = await ToolInventoryService.fetchToolGroupDetails(toolName);
-        UI.renderModalUI(toolName, detailRecords);
+        // MATCHED: fetchToolDetails
+        const detailRecords = await ToolInventoryService.fetchToolDetails(toolName);
+        renderInventoryModal(toolName, detailRecords);
     } catch (err) {
         console.error("Detail Load Error:", err);
     }
@@ -69,7 +76,9 @@ window.openToolDetail = async (toolName) => {
 
 window.handleReturn = async (transactionId, toolName) => {
     if (!confirm(`Confirm return for ${toolName}?`)) return;
-    await ToolInventoryService.finalizeToolReturn(transactionId);
+    
+    // MATCHED: processToolReturn
+    await ToolInventoryService.processToolReturn(transactionId);
     await window.openToolDetail(toolName);
     refreshInventoryDashboard();
 };
@@ -100,6 +109,7 @@ window.confirmAssign = async (toolId, name, serial) => {
     const operatorName = document.getElementById(`input-${toolId}`).value;
     if (!operatorName) return;
     
+    // MATCHED: assignToolToUser
     await ToolInventoryService.assignToolToUser({ 
         toolId, 
         user_name: operatorName, 
@@ -113,7 +123,8 @@ window.confirmAssign = async (toolId, name, serial) => {
 
 window.decommissionTool = async (toolId, transactionId, toolName) => {
     if (confirm("DANGER: Permanently decommission this asset? This removes it from active tracking.")) {
-        await ToolInventoryService.permanentlyDecommissionTool(toolId, transactionId);
+        // MATCHED: decommissionToolFromSystem
+        await ToolInventoryService.decommissionToolFromSystem(toolId, transactionId);
         await window.openToolDetail(toolName);
         refreshInventoryDashboard();
     }
@@ -124,10 +135,10 @@ window.markDamaged = async (toolId, toolName) => {
     if (!reason) return;
 
     try {
-        // Now using the imported Shared Component
         renderLoadingState("Status Update", "Relocating to Service Registry...");
         
-        await ToolInventoryService.updateToolFunctionalStatus(toolId, 'DAMAGED', reason);
+        // MATCHED: updateToolStatus
+        await ToolInventoryService.updateToolStatus(toolId, 'DAMAGED', reason);
         await window.openToolDetail(toolName);
         refreshInventoryDashboard();
     } catch (err) {
@@ -139,10 +150,10 @@ window.markRepaired = async (toolId, toolName) => {
     if (!confirm(`Has the ${toolName} been cleared for service?`)) return;
 
     try {
-        // Now using the imported Shared Component
         renderLoadingState("System Sync", "Restoring to Available Inventory...");
         
-        await ToolInventoryService.updateToolFunctionalStatus(toolId, 'AVAILABLE', 'Maintenance Cycle Complete');
+        // MATCHED: updateToolStatus
+        await ToolInventoryService.updateToolStatus(toolId, 'AVAILABLE', 'Maintenance Cycle Complete');
         await window.openToolDetail(toolName);
         refreshInventoryDashboard();
     } catch (err) {
