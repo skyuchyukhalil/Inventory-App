@@ -6,8 +6,8 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // Import our modular routes
-const transactionRoutes = require('./routes/transactions');
-const inventoryRoutes = require('./routes/inventory');
+const transactionRoutes = require('./backend/routes/transactions');
+const inventoryRoutes = require('./backend/routes/inventory');
 
 // Mount the API
 app.use('/api/transactions', transactionRoutes);
