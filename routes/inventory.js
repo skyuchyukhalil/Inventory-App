@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../database'); // Our central DB file
+const db = require('../backend/config/database'); // Our central DB file
 
 // GET: Summary for dashboard cards
 router.get('/summary', (req, res) => {

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../database'); // Import our single connection
+const db = require('../backend/config/database'); // Import our single connection
 
 // POST: Assign Tool
 router.post('/', (req, res) => {
