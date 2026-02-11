@@ -161,6 +161,15 @@ window.markRepaired = async (toolId, toolName) => {
     }
 };
 
+window.toggleMaintenanceDetail = (detailId, iconId) => {
+    const detail = document.getElementById(detailId);
+    const icon = document.getElementById(iconId);
+    
+    detail.classList.toggle('hidden');
+    // This rotates the arrow 180 degrees (from down to up/backwards)
+    icon.classList.toggle('rotate-180');
+};
+
 window.applyFilter = (filterType) => {
     const cards = document.querySelectorAll('.tool-card'); 
     cards.forEach(card => {
