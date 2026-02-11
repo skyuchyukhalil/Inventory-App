@@ -1,5 +1,7 @@
-import { ToolInventoryService } from './services/ToolInventoryService.js';
-import { UI } from './ui/index.js'; // We will refactor this folder next
+import { ToolInventoryService } from './services/ToolInventoryService.js'
+import { renderPrimaryToolList } from './features/DashboardOverview/DashboardRenderer.js';
+import { renderLoadingState } from './components/SharedUIElements.js';
+import { renderAddToolForm } from './features/InventoryManagement/AddToolFormRenderer.js';
 
 /**
  * Initialization: Setup global listeners and initial data fetch
@@ -19,7 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
 async function refreshInventoryDashboard() {
     try {
         const summaryData = await ToolInventoryService.fetchInventoryDashboardSummary();
-        UI.renderToolList(summaryData);
+        // Use the explicit feature renderer
+        renderPrimaryToolList(summaryData);
     } catch (err) {
         console.error("Critical: Dashboard failed to refresh", err);
     }
@@ -33,7 +36,7 @@ async function refreshInventoryDashboard() {
 
 window.openAddModal = () => {
     document.getElementById('tool-modal').classList.remove('hidden');
-    UI.renderAddToolForm();
+    renderAddToolForm();
 };
 
 window.submitNewTool = async () => {
@@ -121,12 +124,14 @@ window.markDamaged = async (toolId, toolName) => {
     if (!reason) return;
 
     try {
-        UI.renderLoadingState("Status Update", "Relocating to Service Registry...");
+        // Now using the imported Shared Component
+        renderLoadingState("Status Update", "Relocating to Service Registry...");
+        
         await ToolInventoryService.updateToolFunctionalStatus(toolId, 'DAMAGED', reason);
         await window.openToolDetail(toolName);
         refreshInventoryDashboard();
     } catch (err) {
-        console.error(err);
+        console.error("Maintenance update failed:", err);
     }
 };
 
@@ -134,12 +139,14 @@ window.markRepaired = async (toolId, toolName) => {
     if (!confirm(`Has the ${toolName} been cleared for service?`)) return;
 
     try {
-        UI.renderLoadingState("System Sync", "Restoring to Available Inventory...");
+        // Now using the imported Shared Component
+        renderLoadingState("System Sync", "Restoring to Available Inventory...");
+        
         await ToolInventoryService.updateToolFunctionalStatus(toolId, 'AVAILABLE', 'Maintenance Cycle Complete');
         await window.openToolDetail(toolName);
         refreshInventoryDashboard();
     } catch (err) {
-        console.error(err);
+        console.error("Repair sync failed:", err);
     }
 };
 
