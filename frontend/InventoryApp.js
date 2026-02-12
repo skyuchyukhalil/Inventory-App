@@ -46,6 +46,8 @@ window.openAddModal = () => {
 // Actions: Handle the global search input
 window.handleSearch = (query) => AssetActionHandler.handleGlobalSearch(query);
 
+window.filterModalSerials = (query) => AssetActionHandler.filterModalSerials(query);s
+
 // Lifecycle: Register a new physical tool
 window.submitNewTool = () => InventoryLifecycleHandler.submitNewAsset(refreshInventoryDashboard);
 

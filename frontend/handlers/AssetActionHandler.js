@@ -93,4 +93,22 @@ export const AssetActionHandler = {
             card.classList.toggle('hidden', !isMatch);
         });
     },
+    
+    //Filters rows inside the modal by checking the serial number text.
+    filterModalSerials(query) {
+        const searchTerm = query.toLowerCase().trim();
+        // Look only for tool cards inside the modal list
+        const rows = document.querySelectorAll('#modal-items-list .tool-card');
+
+        rows.forEach(row => {
+            // We assume the serial number is in an element with the 'font-mono' class
+            // (Used in all your row renderers: Assignment, Maintenance, and Available)
+            const serialEl = row.querySelector('.font-mono');
+            if (!serialEl) return;
+
+            const serialText = serialEl.innerText.toLowerCase();
+            // Toggle visibility
+            row.classList.toggle('hidden', !serialText.includes(searchTerm));
+        });
+    }
 };
