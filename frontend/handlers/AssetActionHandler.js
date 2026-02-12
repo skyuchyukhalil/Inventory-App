@@ -68,5 +68,22 @@ export const AssetActionHandler = {
             el.classList.toggle('shadow-md', isActive);
             el.classList.toggle('border-transparent', !isActive);
         });
-    }
+    },
+
+    //Filter dashboard cards based on a user's search input
+    handleGlobalSearch(query) {
+        //Convert the user's search query to lowercase for case-insensitive matching
+        const searchTerm = query.toLowerCase().trim();
+
+        //Target all individual tool cards on the dashboard
+        const toolCards = document.querySelectorAll('#tool-list > div');
+        toolCards.forEach(card => {
+            //Extract the tool's name and category from the card's inner text
+            const content = card.InnerText.toLowerCase();
+            const matchesSearch = content.includes(searchTerm);
+
+            //Toggle the visibility of the card based on whether it matches the search term
+            card.classList.toggle('hidden', !matchesSearch);
+        });
+    },
 };
