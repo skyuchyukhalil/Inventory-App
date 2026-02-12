@@ -72,18 +72,25 @@ export const AssetActionHandler = {
 
     //Filter dashboard cards based on a user's search input
     handleGlobalSearch(query) {
-        //Convert the user's search query to lowercase for case-insensitive matching
+        // Normalize the search term for a case-insensitive, whitespace-agnostic match
         const searchTerm = query.toLowerCase().trim();
 
-        //Target all individual tool cards on the dashboard
+        // Select all top-level tool category cards from the dashboard list
         const toolCards = document.querySelectorAll('#tool-list > div');
-        toolCards.forEach(card => {
-            //Extract the tool's name and category from the card's inner text
-            const content = card.InnerText.toLowerCase();
-            const matchesSearch = content.includes(searchTerm);
 
-            //Toggle the visibility of the card based on whether it matches the search term
-            card.classList.toggle('hidden', !matchesSearch);
+        toolCards.forEach(card => {
+            // 1. Extract visible text (Name and Category displayed on the card)
+            const visibleContent = card.innerText.toLowerCase();
+
+            // 2. Extract hidden metadata (The serial numbers we just embedded in the data-serials attribute)
+            const hiddenSerials = card.getAttribute('data-serials') || "";
+            const serialContent = hiddenSerials.toLowerCase();
+
+            // 3. Determine if the search term exists in either the visible text OR the hidden serials
+            const isMatch = visibleContent.includes(searchTerm) || serialContent.includes(searchTerm);
+
+            // Toggle the 'hidden' class: display the card if a match is found, hide it otherwise
+            card.classList.toggle('hidden', !isMatch);
         });
     },
 };
