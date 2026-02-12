@@ -11,12 +11,14 @@ import { InventoryLifecycleHandler } from './handlers/InventoryLifecycleHandler.
 // 3. Renderers
 import { renderPrimaryToolList } from './features/DashboardOverview/DashboardRenderer.js';
 import { renderAddToolForm } from './features/InventoryManagement/AddToolFormRenderer.js';
+import { renderGlobalSearchBar } from './features/DashboardOverview/SearchBarRenderer.js';
 
 // --- Initialization ---
 
 // Start the app once the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     refreshInventoryDashboard();
+    renderGlobalSearchBar();
     
     // Global listener to close any open action menus when clicking outside
     document.addEventListener('click', () => {
@@ -41,6 +43,8 @@ window.openAddModal = () => {
     document.getElementById('tool-modal').classList.remove('hidden');
     renderAddToolForm();
 };
+// Actions: Handle the global search input
+window.handleSearch = (query) => AssetActionHandler.handleGlobalSearch(query);
 
 // Lifecycle: Register a new physical tool
 window.submitNewTool = () => InventoryLifecycleHandler.submitNewAsset(refreshInventoryDashboard);
